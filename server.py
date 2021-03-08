@@ -3,7 +3,7 @@ import soundfile as sf
 import librosa
 import numpy as np
 from os import system
-import speechmetrics
+# import speechmetrics
 
 import math
 
@@ -20,13 +20,10 @@ texts = ['Alla tiger och undviker varandra med blicken',
         'Han skulle gifta sig med en ängel utan vingar',
         'Han rullade sina axlar för att mjuka upp lederna']
 
-speech_metrics = speechmetrics.load('absolute', window=None)
+# speech_metrics = speechmetrics.load('absolute', window=None)
 
 @app.route('/')
 @app.route('/app/'+str(len(texts)+1))# Loop if all are done
-def redir(index=0):
-  return redirect('/app/0', code=302)
-
 def redir(index=0):
   return redirect('/app/0', code=302)
 

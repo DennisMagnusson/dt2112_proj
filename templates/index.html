@@ -1,115 +1,283 @@
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
 <html>
-<head>
-  <title>WOW! This sure is a WEBSITE!!!</title>
-  <!-- Make the thing Dark -->
-  <style>
-    body {
-      color: white;
-      background-color: #222222;
-    }
-  </style>
-  <!-- jQuery -->
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-  <!-- Code taken from https://jsfiddle.net/xuyy3han/ -->
-  <script>
-  navigator.mediaDevices.getUserMedia({
-  audio: true
-  })
-  .then(stream => {
-    rec = new MediaRecorder(stream);
-    rec.ondataavailable = e => {
-      audio.push(e.data);
-      if (rec.state == "inactive") {
-        let blob = new Blob(audio, {
-          type: 'audio/x-mpeg-3'
-        });
-        recordedAudio.src = URL.createObjectURL(blob);
-        recordedAudio.controls = true;
-        audioDownload.href = recordedAudio.src;
-        audioDownload.download = 'audio.mp3';
-        audioDownload.innerHTML = 'Download';
-        submit(blob);
-      }
-    }
-  })
-  .catch(e => console.log(e));
+	<head>
+		<title>Speech Technology</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{{ url_for('static', filename='/assets/css/main.css') }}" />
+		<noscript><link rel="stylesheet" href="{{ url_for('static', filename='/assets/css/static/assets/css/noscript.css') }}" /></noscript>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+		<script>
+		  navigator.mediaDevices.getUserMedia({
+		  audio: true
+		  })
+		  .then(stream => {
+			rec = new MediaRecorder(stream);
+			rec.ondataavailable = e => {
+			  audio.push(e.data);
+			  if (rec.state == "inactive") {
+				let blob = new Blob(audio, {
+				  type: 'audio/x-mpeg-3'
+				});
+				recordedAudio.src = URL.createObjectURL(blob);
+				recordedAudio.controls = true;
+				audioDownload.href = recordedAudio.src;
+				audioDownload.download = 'audio.mp3';
+				audioDownload.innerHTML = 'Download';
+				submit(blob);
+			  }
+			}
+		  })
+		  .catch(e => console.log(e));
 
-  function startRecording() {
-    startRecord.disabled = true;
-    stopRecord.disabled = false;
-    audio = [];
-    recordedAudio.controls = false;
-    rec.start();
-  }
+		  function startRecording() {
+			startRecord.disabled = true;
+			stopRecord.disabled = false;
+			audio = [];
+			recordedAudio.controls = false;
+			rec.start();
+		  }
 
-  function stopRecording() {
-    startRecord.disabled = false;
-    stopRecord.disabled = true;
-    rec.stop();
-  }
+		  function stopRecording() {
+			startRecord.disabled = false;
+			stopRecord.disabled = true;
+			rec.stop();
+		  }
 
-  function submit(blob) {
-    var reader = new window.FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = function() {
-      var fd = new FormData();
-      var file = new File([blob], "audio.ogg");
-      fd.append('file', file);
-      $.ajax({
-        type: 'POST',
-        url: '/thing',
-        data: fd,
-        cache: false,
-        processData: false,
-        contentType: false,
-        enctype: 'multipart/form-data'
-      }).done(function(data) {
-        console.log(data);
-        full_response.innerHTML = JSON.stringify(data, null, 2);
-        nextlink.style.visibility = "visible";
-      });
-    }
-  }
-  </script>
-</head>
-<body>
-<h1>Project Prototype</h1>
+		  function submit(blob) {
+			var reader = new window.FileReader();
+			reader.readAsDataURL(blob);
+			reader.onloadend = function() {
+			  var fd = new FormData();
+			  var file = new File([blob], "audio.ogg");
+			  fd.append('file', file);
+			  $.ajax({
+				type: 'POST',
+				url: '/thing',
+				data: fd,
+				cache: false,
+				processData: false,
+				contentType: false,
+				enctype: 'multipart/form-data'
+			  }).done(function(data) {
+				console.log(data);
+				full_response.innerHTML = JSON.stringify(data, null, 2);
+				nextlink.style.visibility = "visible";
+			  });
+			}
+		  }
+		function getResponse() {
+			var yourSelect = document.getElementById( "select_day" );
+			var yourSelect = yourSelect.value;
+			if (yourSelect === "1") {
+				document.getElementById( "text_day" ).innerHTML = "Everyday<br> Alla tiger och undviker varandra med blicken.<br> De kanske annars skulle ha flugit söderut mot värmen.<br> Fotboll intresserade honom ju egentligen inte.<br> Ingen av de tillfrågade ville syssla med gruvdrift.<br> Vid juletid skickas mössor till kungafamiljen.";
+				document.getElementById( "text_day2" ).innerHTML = "Everyday<br> Alla tiger och undviker varandra med blicken.<br> De kanske annars skulle ha flugit söderut mot värmen.<br> Fotboll intresserade honom ju egentligen inte.<br> Ingen av de tillfrågade ville syssla med gruvdrift.<br> Vid juletid skickas mössor till kungafamiljen.";
+				document.getElementById( "student_recording" ).src = "{{ url_for('static', filename='voice_recordings_template/everyday.m4a') }}";
+			} else if (yourSelect === "2") {
+				document.getElementById( "text_day" ).innerHTML = "Day 1<br> Avhoppet från överklassen innebar ett vägval.<br> Bara ett syskon kunde tänkas ha samma blodgrupp.<br> Den ljushårige publikfavoriten skulle bort.<br> Han skulle gifta sig med en ängel utan vingar.<br> Han rullade sina axlar för att mjuka upp lederna.";
+				document.getElementById( "text_day2" ).innerHTML = "Day 1<br> Avhoppet från överklassen innebar ett vägval.<br> Bara ett syskon kunde tänkas ha samma blodgrupp.<br> Den ljushårige publikfavoriten skulle bort.<br> Han skulle gifta sig med en ängel utan vingar.<br> Han rullade sina axlar för att mjuka upp lederna.";
+				document.getElementById( "student_recording" ).src = "{{ url_for('static', filename='voice_recordings_template/day1.m4a') }}";
+			} else if (yourSelect === "3") {
+				document.getElementById( "text_day" ).innerHTML = "Day 2<br> De kan sparas i skattkistan och växlas till guldpengar.<br>Ett onaturligt lugn lägrade sig över stationen.<br>Han fångade in henne som spindeln fångar flugan i sitt nät.<br>Mamman återupptog då sitt yrke som lärarinna.<br>Utan drottningen kan bisamhället inte existera.";
+				document.getElementById( "text_day2" ).innerHTML = "Day 2<br> De kan sparas i skattkistan och växlas till guldpengar.<br>Ett onaturligt lugn lägrade sig över stationen.<br>Han fångade in henne som spindeln fångar flugan i sitt nät.<br>Mamman återupptog då sitt yrke som lärarinna.<br>Utan drottningen kan bisamhället inte existera.";
+				document.getElementById( "student_recording" ).src = "{{ url_for('static', filename='voice_recordings_template/day2.m4a') }}";
+			} else if (yourSelect === "4") {
+				document.getElementById( "text_day" ).innerHTML = "Day 3<br>Allt fångas kyligt och matematiskt i en formel.<br>De toppas av två jasägare och en nejsägare.<br>Som om ett halmstrå stuckit fram ur madrassen och kliat.<br>Som mest uppgår höjningen till en dryg hundralapp i månaden.<br>Troligen får vi inga erkännanden här heller.";
+				document.getElementById( "text_day2" ).innerHTML = "Day 3<br>Allt fångas kyligt och matematiskt i en formel.<br>De toppas av två jasägare och en nejsägare.<br>Som om ett halmstrå stuckit fram ur madrassen och kliat.<br>Som mest uppgår höjningen till en dryg hundralapp i månaden.<br>Troligen får vi inga erkännanden här heller.";
+				document.getElementById( "student_recording" ).src = "{{ url_for('static', filename='voice_recordings_template/day3.m4a') }}";
+			} else if (yourSelect === "5") {
+				document.getElementById( "text_day" ).innerHTML = "Day 4<br> De bytte potatisen och kålen mot vinstockar.<br>Den starkare dollarn gynnar framför allt exportföretagen.<br>Flickan blåste ut röken och hälsade snabbt på honom.<br>Hon började fundera på vägarna in i gemenskap.<br>Om en månad avgör koncernen vilka fabriker som drabbas.";
+				document.getElementById( "text_day2" ).innerHTML = "Day 4<br> De bytte potatisen och kålen mot vinstockar.<br>Den starkare dollarn gynnar framför allt exportföretagen.<br>Flickan blåste ut röken och hälsade snabbt på honom.<br>Hon började fundera på vägarna in i gemenskap.<br>Om en månad avgör koncernen vilka fabriker som drabbas.";
+				document.getElementById( "student_recording" ).src = "{{ url_for('static', filename='voice_recordings_template/day4.m4a') }}";
+			} else if (yourSelect === "6") {
+				document.getElementById( "text_day" ).innerHTML = "Day 5<br>De tre beskrivna fallen kan tyckas oskyldiga.<br>Den förstör idag hundratusentals medborgares vardag.<br>Han pendlar mellan hård polemik och mjuk poesi.<br>Sin karriär verkar han inte imponerad av.<br>Ämnet heter något så krångligt som projektmetodik.";
+				document.getElementById( "text_day2" ).innerHTML = "Day 5<br>De tre beskrivna fallen kan tyckas oskyldiga.<br>Den förstör idag hundratusentals medborgares vardag.<br>Han pendlar mellan hård polemik och mjuk poesi.<br>Sin karriär verkar han inte imponerad av.<br>Ämnet heter något så krångligt som projektmetodik.";
+				document.getElementById( "student_recording" ).src = "{{ url_for('static', filename='voice_recordings_template/day5.m4a') }}";
+			} else if (yourSelect === "7") {
+				document.getElementById( "text_day" ).innerHTML = "Day 6<br>Den orsakade också en mängd oönskade utsläpp.<br>Det började med några buntar papperstallrikar.<br>Troligen får vi inga erkännanden här heller.<br>Några litterära kvaliteter eftersträvar de knappast.<br>Visst glappar det i kontakten mellan väljare och valda.";
+				document.getElementById( "text_day2" ).innerHTML = "Day 6<br>Den orsakade också en mängd oönskade utsläpp.<br>Det började med några buntar papperstallrikar.<br>Troligen får vi inga erkännanden här heller.<br>Några litterära kvaliteter eftersträvar de knappast.<br>Visst glappar det i kontakten mellan väljare och valda.";
+				document.getElementById( "student_recording" ).src = "{{ url_for('static', filename='voice_recordings_template/day6.m4a') }}";
+			} else {
+				document.getElementById( "text_day" ).innerHTML = "Select a text from the dropdown menu";
+				document.getElementById( "text_day2" ).innerHTML = "Select a text from the dropdown menu";
+				document.getElementById( "student_recording" ).src = "";
+			}
+		}
+		</script>		
+	</head>
+	<body class="is-preload">
 
-<h1>Listen to sound here! Index = {{index}} </h1>
-<h2> This is the text you should read: </h2></br> 
-<h2 style='color:yellow'>{{ text }}</h2>
-<audio controls>
-  <source src="{{url_for('static', filename=(index|string)+'.wav')}}" type="audio/wav"/>
-  listen
-</audio>
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header" class="alt">
+						<span class="logo"><img src="{{ url_for('static', filename='images/stethoscope.png') }}" alt="" style="width:100px;height:120px;"/></span>
+						<h1>Speech Recovery</h1>
+						<p>and vocal cords exercises<br />
+						work by Kevin Kelly, Dennis Magnusson, Daniel Pérez and Kani Yara </p>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul>
+							<li><a href="#intro" class="active">Select audio file</a></li>
+							<li><a href="#first">Upload audio file</a></li>
+							<li><a href="#second">Record your own audio</a></li>
+							<li><a href="#cta">See voice analytics</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Introduction -->
+							<section id="intro" class="main">
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>Select and listen to an audio file</h2>
+										</header>
+										<p>Here you can select different texts and listen to someone 
+										reading the selected text out-loud.</p>
+										<div class="col-12">
+											<select id="select_day" onchange=getResponse()>
+												<option value="0">- Select day -</option>
+												<option value="1">Everyday</option>
+												<option value="2">Day_1</option>
+												<option value="3">Day_2</option>
+												<option value="4">Day_3</option>
+												<option value="5">Day_4</option>
+												<option value="6">Day_5</option>
+												<option value="7">Day_6</option>
+											</select>
+										</div>
+										<div class="col-12">									
+										<blockquote id="text_day"> Select a text from the dropdown menu</blockquote>
+										</div>
+										<audio controls id="student_recording">
+												<source src="" type="audio/wav"/>
+										</audio>
+									</div>
+									<span class="image"><img src="{{ url_for('static', filename='images/employee_sound.png') }}" alt="" /></span>
+								</div>
+							</section>
+
+						<!-- First Section -->
+							<section id="first" class="main special">
+								<header class="major">
+									<h2>Upload your own audio file</h2>
+								</header>
+								
+								<footer class="actions">
+									<form method="POST" action="/thing" enctype="multipart/form-data" >
+									  <input class="button icon solid fa-upload" name="file" type="file"  />
+									  <input  type="submit" />
+									</form>
+								</footer>
+							</section>
+
+						<!-- Second Section -->
+							<section id="second" class="main special">
+								<header class="major">
+									<h2>Record your own audio file</h2>
+									<p>In this section you can record your own voice while reading the selected text</p>
+									<p id="text_day2"> Select a text from the dropdown menu in the previous section</p>
+								</header>
+								<div id="audio">
+									<button id=startRecord onclick="startRecording()">Start</button>
+									<button id=stopRecord onclick="stopRecording()">Stop</button>
+								  </div>
+								  
+								<div id="result">
+								  <audio id=recordedAudio></audio>
+								  </br>
+								  <a id=audioDownload></a>
 
 
-<h1>Upload file here</h1>
-<form method="POST" action="/thing" enctype="multipart/form-data">
-  <input name="file" type="file" />
-  <input type="submit" />
-</form>
+								  <pre id="full_response"></pre>
 
+								  </p>
+								</div>  
+							</section>
 
+						<!-- Get Started -->
+							<section id="cta" class="main special">
+								<header class="major">
+									<h2>See Voice Analytics</h2>
+									<p>Here you can see the metrics from your own analyzed audio file.</p>
+								</header>
+								<h1><a id="nextlink" style="visibility:hidden;color:red"  href="{{ url_for('.display_page', index=(index|int)+(1|int))}}"> click here to go to the next thingy </a></h1>
+								<ul class="statistics">
+									<li class="style1">
+										<img src="{{ url_for('static', filename='images/probability.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="voicedprob">5,120</strong> Voiced prob
+									</li>
+									<li class="style2">
+										<img src="{{ url_for('static', filename='images/speaking.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="pitch">8,192</strong> pitch
+									</li>
+									<li class="style3">
+										<img src="{{ url_for('static', filename='images/gaussian-function.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="stddev">2,048</strong> std. dev.
+									</li>
+									<li class="style4">
+										<img src="{{ url_for('static', filename='images/tachometer.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="syllable">4,096</strong> syllables estimation
+									</li>
+									<li class="style5">
+										<img src="{{ url_for('static', filename='images/communication.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="voicedperc">1,024</strong> Voiced %
+									</li>
+								</ul>
+								<p class="content">The recordings will be evaluated separately by assigning a score based on metrics extracted from the audio data relating to, for example, the tone of the spoken sentence as well as number of breath pauses made during the spoken sentence. 
+									A high tone score will mean that the tone of the sentence was similar to the reference audio.
+									A high breath pause score will indicate how well their lung capacity is compared to the reference speaker.
+									Objective evaluation, pitch extractors in python, example of potential matrix, find harmonics in the speech.
+								</p>
+								
+								<footer class="major">
+								</footer>
+							</section>
 
-<h1>Or record something here!</h1>
-<div id="audio">
-    <button id=startRecord onclick="startRecording()">Start</button>
-    <button id=stopRecord onclick="stopRecording()">Stop</button>
-  </div>
+					</div>
 
-<div id="result">
-  <h1>Result</h2>
-  <audio id=recordedAudio></audio>
-  </br>
-  <a id=audioDownload></a>
+				<!-- Footer -->
+					<footer id="footer">
+						<section>
+							<h2>Project for the course Speech Technology at KTH</h2>
+							<p>Project carried out by Kevin Kelly, Dennis Magnusson, Daniel Pérez and Kani Yara, with the help of Remeo Clinic.</p>
+							<ul class="actions">
+								<li><a href="https://www.rkliniken.se/" class="button">Learn More about Remeo Clinic here</a></li>
+							</ul>
+						</section>
+						<section>
+							<ul class="icons">
+								<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+								<div>Icons made by <a href="https://www.flaticon.com/authors/chanut" title="Chanut">Chanut</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+								<div>Icons made by <a href="https://www.flaticon.com/authors/becris" title="Becris">Becris</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+								<div>Icons made by <a href="https://www.flaticon.com/authors/fjstudio" title="fjstudio">fjstudio</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+								<div>Based on <a href="https://twitter.com/ajlkn">@ajlkn</a> for <a href="https://html5up.net">HTML5 UP</a>.</div>
+							</ul>
+						</section>
+						<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+					</footer>
 
+			</div>
 
-  <pre id="full_response"></pre>
+		<!-- Scripts -->
+			<script src="{{ url_for('static', filename='assets/js/jquery.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/jquery.scrollex.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/jquery.scrolly.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/browser.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/breakpoints.min.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/util.js') }}"></script>
+			<script src="{{ url_for('static', filename='assets/js/main.js') }}"></script>
 
-  </p>
-</div>
-
-<h1><a id="nextlink" style="visibility:hidden;color:red"  href="{{ url_for('.display_page', index=(index|int)+(1|int))}}"> click here to go to the next thingy </a></h1>
-</body>
+	</body>
 </html>
