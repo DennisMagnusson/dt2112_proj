@@ -45,7 +45,7 @@ def thing():
   metrics = get_metrics(wav_filename)
   metrics['pitch_score'] = (metrics['stddev'] - 4.552686) / 1.998870
   metrics['voice_score'] = (metrics['voiced_prob'] - 0.461134) / 0.140464 + 0.3*(4.012101 - metrics['mosnet']) /  0.355457
-  return jsonify(get_metrics(wav_filename))
+  return jsonify(metrics)
 
 def get_metrics(wav_filename='tmp.wav'):
   speech_mets = speech_metrics(wav_filename)
