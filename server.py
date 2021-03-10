@@ -50,6 +50,7 @@ def thing():
 def get_metrics(wav_filename='tmp.wav'):
   speech_mets = speech_metrics(wav_filename)
   data, sr = librosa.load(wav_filename, sr=16000)
+  data = librosa.util.normalize(data)
   spectrogram = librosa.feature.melspectrogram(y=data, sr=sr)
   f0, _, prob = librosa.pyin(data, sr=sr, fmin=65, fmax=600, frame_length=512)
   # Filter out noise in f0
@@ -89,7 +90,7 @@ def trim_silence(f0, prob):
       i += 1
     else:
       break
-
+  
   f0 = f0[i:]
   prob = prob[i:]
   i = 0
@@ -99,8 +100,9 @@ def trim_silence(f0, prob):
     else:
       break
   
-  f0 = f0[:-i]
-  prob = prob[:-i]
+  if i > 0:
+    f0 = f0[:-i]
+    prob = prob[:-i]
   return f0, prob
 
 
