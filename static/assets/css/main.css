@@ -2896,7 +2896,7 @@ input, select, textarea {
 			-ms-flex: 1;
 			flex: 1;
 			padding: 1.5em;
-			color: #ffffff;
+			color: #000000;
 			text-align: center;
 		}
 
