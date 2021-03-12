@@ -47,6 +47,7 @@
 			startRecord.disabled = false;
 			stopRecord.disabled = true;
 			rec.stop();
+			
 		  }
 
 		  function submit(blob) {
@@ -58,16 +59,25 @@
 			  fd.append('file', file);
 			  $.ajax({
 				type: 'POST',
-				url: '/thing',
 				data: fd,
+				url: '/thing2',
 				cache: false,
 				processData: false,
 				contentType: false,
 				enctype: 'multipart/form-data'
 			  }).done(function(data) {
 				console.log(data);
-				full_response.innerHTML = JSON.stringify(data, null, 2);
-				nextlink.style.visibility = "visible";
+				console.log(data[0]);
+				pitch_score.innerHTML = data[0];
+				voice_score.innerHTML = data[1];
+				voiced_prob.innerHTML = data[2];
+				pitch.innerHTML = data[3];
+				stddev.innerHTML = data[4];
+				syllable_estimate.innerHTML = data[5];
+				voiced_percent.innerHTML = data[6];
+				srmr.innerHTML = data[7];
+				mosnet.innerHTML = data[8];
+				document.getElementById('scroll').scrollIntoView();
 			  });
 			}
 		  }
@@ -147,14 +157,14 @@
 										reading the selected text out-loud.</p>
 										<div class="col-12">
 											<select id="select_day" onchange=getResponse()>
-												<option value="0">- Select day -</option>
+												<option value="0">- Select Text -</option>
 												<option value="1">Everyday</option>
-												<option value="2">Day_1</option>
-												<option value="3">Day_2</option>
-												<option value="4">Day_3</option>
-												<option value="5">Day_4</option>
-												<option value="6">Day_5</option>
-												<option value="7">Day_6</option>
+												<option value="2">Text_1</option>
+												<option value="3">Text_2</option>
+												<option value="4">Text_3</option>
+												<option value="5">Text_4</option>
+												<option value="6">Text_5</option>
+												<option value="7">Text_6</option>
 											</select>
 										</div>
 										<div class="col-12">									
@@ -208,38 +218,70 @@
 
 						<!-- Get Started -->
 							<section id="cta" class="main special">
-								<header class="major">
-									<h2>See Voice Analytics</h2>
+								<header class="major" id="scroll">
+									{% if scroll %}
+									<script>
+										document.getElementById('{{ scroll }}').scrollIntoView();
+										// or
+										document.location.hash = '#' + '{{ scroll }}';
+									</script>
+									{% endif %}
+									<h2 >See Voice Analytics</h2>
 									<p>Here you can see the metrics from your own analyzed audio file.</p>
 								</header>
-								<h1><a id="nextlink" style="visibility:hidden;color:red"  href="{{ url_for('.display_page', index=(index|int)+(1|int))}}"> click here to go to the next thingy </a></h1>
 								<ul class="statistics">
 									<li class="style1">
-										<img src="{{ url_for('static', filename='images/probability.png') }}" alt="" style="width:50px;height:50px;"/>
-										<strong id="voicedprob">5,120</strong> Voiced prob
+										<img src="{{ url_for('static', filename='images/sound-wave-bars.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="pitch_score">{{pitch_score}}</strong> Pitch Score
 									</li>
 									<li class="style2">
-										<img src="{{ url_for('static', filename='images/speaking.png') }}" alt="" style="width:50px;height:50px;"/>
-										<strong id="pitch">8,192</strong> pitch
+										<img src="{{ url_for('static', filename='images/voice.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="voice_score">{{voice_score}}</strong> Voice score
 									</li>
 									<li class="style3">
+										<img src="{{ url_for('static', filename='images/abacus.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="syllable_estimate">{{syllable_estimate}}</strong> syllables estimation
+									</li>
+								</ul>
+								<ul class="statistics">
+									
+									<li class="style4">
+										<img src="{{ url_for('static', filename='images/probability.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="voiced_prob">{{voiced_prob}}</strong> Voiced prob
+									</li>
+									<li class="style4">
+										<img src="{{ url_for('static', filename='images/speaking.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="pitch">{{pitch}}</strong> pitch
+									</li>
+									<li class="style4">
 										<img src="{{ url_for('static', filename='images/gaussian-function.png') }}" alt="" style="width:50px;height:50px;"/>
-										<strong id="stddev">2,048</strong> std. dev.
+										<strong id="stddev">{{stddev}}</strong> std. dev.
+									</li>
+									<li class="style4">
+										<img src="{{ url_for('static', filename='images/communication.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="voiced_percent">{{voiced_percent}}</strong> Voiced percent
+									</li>
+									
+									<li class="style4">
+										<img src="{{ url_for('static', filename='images/tachometer_2.png') }}" alt="" style="width:50px;height:50px;"/>
+										<strong id="srmr">{{srmr}}</strong> SRMR
 									</li>
 									<li class="style4">
 										<img src="{{ url_for('static', filename='images/tachometer.png') }}" alt="" style="width:50px;height:50px;"/>
-										<strong id="syllable">4,096</strong> syllables estimation
-									</li>
-									<li class="style5">
-										<img src="{{ url_for('static', filename='images/communication.png') }}" alt="" style="width:50px;height:50px;"/>
-										<strong id="voicedperc">1,024</strong> Voiced %
+										<strong id="mosnet">{{mosnet}}</strong> MOSNet
 									</li>
 								</ul>
-								<p class="content">The recordings will be evaluated separately by assigning a score based on metrics extracted from the audio data relating to, for example, the tone of the spoken sentence as well as number of breath pauses made during the spoken sentence. 
-									A high tone score will mean that the tone of the sentence was similar to the reference audio.
-									A high breath pause score will indicate how well their lung capacity is compared to the reference speaker.
-									Objective evaluation, pitch extractors in python, example of potential matrix, find harmonics in the speech.
-								</p>
+
+								<p class="content">Pitch Score: Your pitch is compared to a database of hundreds of voices, comparing your pitch to a generalized one. <br>
+								Voice Score: Your voice is compared to a database of hundreds of voices, comparing yours to a generalized one.<br>
+								Syllables estimation: The estimated number of syllables spoken during the recording.<br>
+								Voiced probability: Average expectation of detecting you speaking.<br>
+								Pitch: Perceived fundamental frequency detected by the recording.<br>
+								Standard Deviation: How much dispersion the pitch suffered.<br>
+								Voice percent: How much the user spoke during the recording.<br>
+								SRMR: Speech to Reverberation Modulation energy Ratio. Metric that detects speech quality and intelligibility.<br>
+								MOSNet: Mean Opinion Score based on Deep Learning.
+ 								</p>
 								
 								<footer class="major">
 								</footer>
@@ -262,6 +304,7 @@
 								<div>Icons made by <a href="https://www.flaticon.com/authors/chanut" title="Chanut">Chanut</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 								<div>Icons made by <a href="https://www.flaticon.com/authors/becris" title="Becris">Becris</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 								<div>Icons made by <a href="https://www.flaticon.com/authors/fjstudio" title="fjstudio">fjstudio</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+								<div>Icons made by <a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
 								<div>Based on <a href="https://twitter.com/ajlkn">@ajlkn</a> for <a href="https://html5up.net">HTML5 UP</a>.</div>
 							</ul>
 						</section>
