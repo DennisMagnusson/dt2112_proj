@@ -81,7 +81,7 @@ def thing2():
     return jsonify((round(metrics['pitch_score'], 2),
                     round(metrics['voice_score'], 2),
                     str(round(metrics['voiced_prob'] * 100, 2)) + " %",
-                    str(round(metrics['f0'], 2)) + " Hz",
+                    str(round(metrics['f0'], 2)) ,
                     round(metrics['stddev'], 2),
                     round(metrics['syllable_estimate'], 2),
                     str(round(metrics['voiced_percent'] * 100, 2)) + " %",
@@ -93,15 +93,15 @@ def thing2():
 
 
 def get_metrics(wav_filename='tmp.wav'):
-  speech_mets = speech_metrics(wav_filename)
-  data, sr = librosa.load(wav_filename, sr=16000)
-  data = librosa.util.normalize(data)
-  spectrogram = librosa.feature.melspectrogram(y=data, sr=sr)
-  f0, _, prob = librosa.pyin(data, sr=sr, fmin=65, fmax=600, frame_length=512)
-  # Filter out noise in f0
-  prob[f0==65] = np.nan
-  f0[f0==65] = np.nan
-  syllables = count_syllables(f0)
+    speech_mets = speech_metrics(wav_filename)
+    data, sr = librosa.load(wav_filename, sr=16000)
+    data = librosa.util.normalize(data)
+    spectrogram = librosa.feature.melspectrogram(y=data, sr=sr)
+    f0, _, prob = librosa.pyin(data, sr=sr, fmin=65, fmax=600, frame_length=512)
+    # Filter out noise in f0
+    prob[f0==65] = np.nan
+    f0[f0==65] = np.nan
+    syllables = count_syllables(f0)
 
     f0, _, prob = librosa.pyin(data, sr=sr, fmin=65, fmax=600)
     # Filter out noise in f0
@@ -128,26 +128,26 @@ def get_metrics(wav_filename='tmp.wav'):
 
 
 def trim_silence(f0, prob):
-  i = 0
-  for f in f0:
-    if np.isnan(f):
-      i += 1
-    else:
-      break
-  
-  f0 = f0[i:]
-  prob = prob[i:]
-  i = 0
-  for f in reversed(f0):
-    if np.isnan(f):
-      i += 1
-    else:
-      break
-  
-  if i > 0:
-    f0 = f0[:-i]
-    prob = prob[:-i]
-  return f0, prob
+    i = 0
+    for f in f0:
+        if np.isnan(f):
+          i += 1
+        else:
+          break
+
+    f0 = f0[i:]
+    prob = prob[i:]
+    i = 0
+    for f in reversed(f0):
+        if np.isnan(f):
+          i += 1
+        else:
+          break
+
+    if i > 0:
+        f0 = f0[:-i]
+        prob = prob[:-i]
+        return f0, prob
 
     f0 = f0[:-i]
     prob = prob[:-i]
